@@ -8,6 +8,32 @@ class Model():
         self.R = R
         self.V = V
 
+    def get_reachable(self, state, agent):
+
+        # Build dictionary of neighbor states
+        r = dict()
+        for (s,d) in self.R[agent]:
+            if s not in r:
+                r[s] = set([d])
+            else: 
+                r[s].add(d)
+            if d not in r:
+                r[d] = set([s])
+            else: 
+                r[d].add(s)
+        
+        if state not in r:
+            return set()
+
+        reachable = r[state]
+        check = r[state]
+        while len(check) != 0:
+            s = next(iter(check))
+            reachable = reachable.union(r[s])
+            check.remove(s)
+        
+        return reachable
+
 def parse_model(content):
 
     content = content.replace(" ", "")
@@ -54,6 +80,8 @@ def main():
     print(model.W)
     print(model.R)
     print(model.V)
+
+    print(model.get_reachable('s0', 'a'))
 
 if __name__ == "__main__":
     main()

@@ -24,9 +24,23 @@ def parse_formula(formula):
         sub = match.group(1) if match.group(1) is not None else match.group(2)
         return ["~", parse_formula(sub)]
 
-    # TODO: Epistemic operators
+    # Knowledge operator
+    knowledge = r"^K_(\w)\(?(.+)\)?$"
+    match = re.match(knowledge, formula)
+    if match is not None:
+        agent = match.group(1)
+        sub = match.group(2)
+        return ["K", agent, parse_formula(sub)]
 
-    # Binary operator
+    # Belief operator
+    belief = r"^B_(\w)\(?(.+)\)?$"
+    match = re.match(belief, formula)
+    if match is not None:
+        agent = match.group(1)
+        sub = match.group(2)
+        return ["B", agent, parse_formula(sub)]
+
+    # Binary operators
     subs, op = get_multi_subformulas(formula)
     parsed = [parse_formula(sub) for sub in subs]
     return [op] + parsed

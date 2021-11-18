@@ -8,9 +8,9 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "./run.py",
             "console": "integratedTerminal",
-            "args": ["p /\\ (q => r)"]
+            "args": [".\\model1.em", "K_b p", "s0"]
         }
     ]
 }

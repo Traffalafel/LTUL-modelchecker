@@ -21,7 +21,7 @@ def main():
     model = parse_model(content)
 
     # Log model
-    print("\nSuccessfully parsed model")
+    print()
     print(f"Model W: {model.W}")
     print(f"Model R: {model.R}")
     print(f"Model V: {model.V}")
@@ -30,12 +30,13 @@ def main():
     # Parse formula
     print(f"Formula: {formula}")
     f_parsed = parse_formula(formula)
-    print(f_parsed)
+    print(f"Parsed:  {f_parsed}")
     print()
 
     # Check formula on model
-    satisfying_sets = get_sets(f_parsed, model)
-    print(satisfying_sets)
+    sat = get_sets(f_parsed, model)
+    print(f"Satisfying states: {sat}")
+    print()
 
 if __name__ == "__main__":
     main()
