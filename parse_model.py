@@ -39,15 +39,21 @@ def parse_model(content):
             props = set(match.group(2).split(","))
             V[state] = props
 
-    return Model(W, R, V)
+    # Add empty sets for state with no propositions
+    for state in W:
+        if state not in V:
+            V[state] = set()
 
+    return Model(W, R, V)
 
 def main():
     file_path = sys.argv[1]
     with open(file_path, 'r') as fd:
         content = fd.read()
-    
-    parse_model(content)
+    model = parse_model(content)
+    print(model.W)
+    print(model.R)
+    print(model.V)
 
 if __name__ == "__main__":
     main()
