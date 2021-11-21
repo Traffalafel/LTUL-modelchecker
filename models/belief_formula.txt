@@ -1,0 +1,1 @@
+(~(B_a p)) /\ (B_a (B_b p)) /\ (B_a (B_c p)) /\ (~(B_b p)) /\ (B_b (B_a p)) /\ (B_b (B_c p)) /\ (~(B_c p)) /\ (B_c (B_b p)) /\ (B_c (B_a p))

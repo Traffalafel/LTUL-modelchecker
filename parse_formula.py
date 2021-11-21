@@ -18,19 +18,19 @@ def parse_formula(formula):
         return ["~", parse_formula(sub)]
 
     # Knowledge operator
-    knowledge = r"^K_(\w)(\(?.+\)?)$"
+    knowledge = r"^K_(\w)(\(?.+\)?)$|^K_(\w)(\w)$"
     match = re.match(knowledge, formula)
     if match is not None:
-        agent = match.group(1)
-        sub = match.group(2)
+        agent = match.group(1) if match.group(1) is not None else match.group(3)
+        sub = match.group(2) if match.group(2) is not None else match.group(4)
         return ["K", agent, parse_formula(sub)]
 
     # Belief operator
-    belief = r"^B_(\w)(\(?.+\)?)$"
+    belief = r"^B_(\w)\((.+)\)$|^B_(\w)(\w)$"
     match = re.match(belief, formula)
     if match is not None:
-        agent = match.group(1)
-        sub = match.group(2)
+        agent = match.group(1) if match.group(1) is not None else match.group(3)
+        sub = match.group(2) if match.group(2) is not None else match.group(4)
         return ["B", agent, parse_formula(sub)]
 
     # Binary operators

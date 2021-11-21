@@ -10,7 +10,9 @@ class Model():
 
     def get_max(self, agent, S):
         output = S
-        for (s,_) in self.R[agent]:
+        for (s,d) in self.R[agent]:
+            if s == d:
+                continue
             if s in output:
                 output.remove(s)
         return output

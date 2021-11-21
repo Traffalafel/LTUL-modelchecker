@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "./run.py",
             "console": "integratedTerminal",
-            "args": [".\\tests\\testmodel1.em", "(p)!(q)"]
+            "args": [".\\models\\belief.em", "B_a p"]
         }
     ]
 }
