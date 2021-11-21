@@ -11,13 +11,6 @@ def parse_formula(formula):
         p = match.group(1)
         return [p]
 
-    # Parenthesis
-    parenthesis = r"^\((.+)\)$"
-    match = re.match(parenthesis, formula)
-    if match is not None:
-        sub = match.group(1)
-        return parse_formula(sub)
-
     negation = r"^~\((.+)\)$|^~(\w)$"
     match = re.match(negation, formula)
     if match is not None:
@@ -25,7 +18,7 @@ def parse_formula(formula):
         return ["~", parse_formula(sub)]
 
     # Knowledge operator
-    knowledge = r"^K_(\w)\(?(.+)\)?$"
+    knowledge = r"^K_(\w)(\(?.+\)?)$"
     match = re.match(knowledge, formula)
     if match is not None:
         agent = match.group(1)
@@ -33,7 +26,7 @@ def parse_formula(formula):
         return ["K", agent, parse_formula(sub)]
 
     # Belief operator
-    belief = r"^B_(\w)\(?(.+)\)?$"
+    belief = r"^B_(\w)(\(?.+\)?)$"
     match = re.match(belief, formula)
     if match is not None:
         agent = match.group(1)
@@ -59,19 +52,31 @@ def get_multi_subformulas(formula):
         if formula[idx] == r")":
             n_parens -= 1
             continue
+        if formula[idx] == "!" and n_parens == 0:
+            op_pos.append(idx)
+            ops.append(formula[idx])
         if formula[idx:idx+2] in operators and n_parens == 0:
             op_pos.append(idx)
             ops.append(formula[idx:idx+2])
 
     if len(set(ops)) > 1:
         raise "Cannot mix operators"
-    
+    op = ops[0]
+
     # Identify subformulas
-    n_ops = len(op_pos)
+    n_subs = len(op_pos)
     idxs = []
     idxs.append((0, op_pos[0]))
-    idxs += [(op_pos[i]+2, op_pos[i+1]) for i in range(n_ops-1)]
-    idxs.append((op_pos[n_ops-1]+2, len(formula)))
+    idxs += [(op_pos[i]+len(op), op_pos[i+1]) for i in range(n_subs-1)]
+    idxs.append((op_pos[n_subs-1]+len(op), len(formula)))
     phis = [formula[i:j] for (i,j) in idxs]
 
-    return phis, ops[0]
+    # Remove outermost parentheses
+    for i,phi in enumerate(phis):
+        if phi[0] == "(":
+            phi = phi[1:]
+        if phi[-1] == ")":
+            phi = phi[:-1]
+        phis[i] = phi
+
+    return phis, op

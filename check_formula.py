@@ -42,10 +42,25 @@ def get_sets(f_parsed, model:Model):
         subformula = f_parsed[2]
         states = set()
         for w in model.W:
-            vs = model.get_reachable(w, agent)
-            if len(vs) == 0:
+            possible = model.get_possible(agent, w)
+            if len(possible) == 0:
                 continue
-            satisfying_vs = [v for v in vs if v in get_sets(subformula, model)]
-            if len(vs) == len(satisfying_vs):
+            s = get_sets(subformula, model)
+            satisfying = [v for v in possible if v in s]
+            if len(possible) == len(satisfying):
+                states.add(w)
+        return states
+
+    # Belief
+    if f_parsed[0] == "B":
+        agent = f_parsed[1]
+        subformula = f_parsed[2]
+        states = set()
+        for w in model.W:
+            possible_w = model.get_possible(agent, w)
+            maxes = model.get_max(agent, possible_w)
+            s = get_sets(subformula, model)
+            satisfying = [v for v in maxes if v in s]
+            if len(maxes) == len(satisfying):
                 states.add(w)
         return states

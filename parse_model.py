@@ -8,31 +8,17 @@ class Model():
         self.R = R
         self.V = V
 
-    def get_reachable(self, state, agent):
+    def get_max(self, agent, S):
+        output = S
+        for (s,_) in self.R[agent]:
+            if s in output:
+                output.remove(s)
+        return output
 
-        # Build dictionary of neighbor states
-        r = dict()
-        for (s,d) in self.R[agent]:
-            if s not in r:
-                r[s] = set([d])
-            else: 
-                r[s].add(d)
-            if d not in r:
-                r[d] = set([s])
-            else: 
-                r[d].add(s)
-        
-        if state not in r:
-            return set()
-
-        reachable = r[state]
-        check = r[state]
-        while len(check) != 0:
-            s = next(iter(check))
-            reachable = reachable.union(r[s])
-            check.remove(s)
-        
-        return reachable
+    def get_possible(self, agent, w):
+        pre = set(s for (s,d) in self.R[agent] if d == w)
+        post = set(d for (s,d) in self.R[agent] if s == w)
+        return set.union(pre, post)
 
 def parse_model(content):
 
@@ -40,9 +26,10 @@ def parse_model(content):
     lines = content.split("\n")
 
     V_pattern = "^(\w+):(\w(,\w)*)$"
-    R_pattern = "^(\w+):(\(\w+->\w+\)(,\(\w+->\w+\))*)$"
+    R_pattern = "^(\w+):(\(\w+<=\w+\)(,\(\w+<=\w+\))*)$"
 
     W = set(lines[0].split(","))
+    agents = set(lines[1].split(","))
     R = dict()
     V = dict()
 
@@ -55,7 +42,7 @@ def parse_model(content):
             trans_s = match.group(2)
             trans_s = trans_s.replace("(", "")
             trans_s = trans_s.replace(")", "")
-            transitions = [s.split("->") for s in trans_s.split(",")]
+            transitions = set([tuple(s.split("<=")) for s in trans_s.split(",")])
             R[agent] = transitions
 
         # V lines
@@ -65,10 +52,45 @@ def parse_model(content):
             props = set(match.group(2).split(","))
             V[state] = props
 
-    # Add empty sets for state with no propositions
+    # Add empty sets for states with no propositions
     for state in W:
         if state not in V:
             V[state] = set()
+
+    # Add empty lists for agents with no transitions
+    for agent in agents:
+        if agent not in R:
+            R[agent] = set()
+
+    # Make transition relations R reflexive
+    for agent in agents:
+        for state in W:
+            R[agent].add((state,state))
+
+    # Make transition relations R transitive
+    for agent in agents:
+
+        for origin in W:
+
+            reachable = {origin}
+            to_check = {origin}
+            checked = set()
+
+            while len(to_check) > 0:
+                state = next(iter(to_check))
+
+                # Compute immediately accessible states
+                r = set([d for (s,d) in R[agent] if s == state])
+                reachable = reachable.union(r)
+
+                # Update which states to check for
+                to_check.remove(state)
+                checked.add(state)
+                to_check = to_check.union(r.difference(checked))
+
+            to_add = set([(origin,d) for d in reachable])
+            R[agent] = R[agent].union(to_add)
+
 
     return Model(W, R, V)
 
@@ -81,7 +103,7 @@ def main():
     print(model.R)
     print(model.V)
 
-    print(model.get_reachable('s0', 'a'))
+    print(model.get_possible('s0', 'a'))
 
 if __name__ == "__main__":
     main()
