@@ -59,6 +59,7 @@ def get_multi_subformulas(formula):
             op_pos.append(idx)
             ops.append(formula[idx:idx+2])
 
+    # Check that there is just one operator type
     if len(set(ops)) > 1:
         raise "Cannot mix operators"
     op = ops[0]
@@ -70,6 +71,10 @@ def get_multi_subformulas(formula):
     idxs += [(op_pos[i]+len(op), op_pos[i+1]) for i in range(n_subs-1)]
     idxs.append((op_pos[n_subs-1]+len(op), len(formula)))
     phis = [formula[i:j] for (i,j) in idxs]
+
+    # Check that numbers of subformulas are valid
+    if (op == "=>" or op == "!") and len(phis) > 2:
+        raise "Cannot have more than 2 subformulas for operator"
 
     # Remove outermost parentheses
     for i,phi in enumerate(phis):
