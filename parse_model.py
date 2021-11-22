@@ -1,6 +1,8 @@
 import re
 import sys
 
+from check_formula import get_sets
+
 class Model():
 
     def __init__(self, W, R, V):
@@ -16,11 +18,39 @@ class Model():
             if s in output:
                 output.remove(s)
         return output
+    
+    def get_post(self, agent, state):
+        return set(d for s,d in self.R[agent] if s == state)
+
+    def get_strict_post(self, agent, state):
+        post = self.get_post(agent, state)
+        return set(d for s,d in post if s != d and (d,s) not in post)
+
+    def get_pre(self, agent, state):
+        return set(s for s,d in self.R[agent] if d == state)
 
     def get_possible(self, agent, w):
-        pre = set(s for (s,d) in self.R[agent] if d == w)
-        post = set(d for (s,d) in self.R[agent] if s == w)
+        pre = self.get_pre(agent, w)
+        post = self.get_post(agent, w)
         return set.union(pre, post)
+
+    def announce(self, formula):
+        W_new = get_sets(formula, self)
+
+        # Get new transition relation
+        R_new = dict()
+        for agent in self.R:
+            R_new[agent] = set()
+            for (s,d) in self.R[agent]:
+                if s in W_new and d in W_new:
+                    R_new[agent].add((s,d))
+
+        # Get new proposition
+        V_new = dict()
+        for w in W_new:
+            V_new[w] = self.V[w]
+
+        return Model(W_new, R_new, V_new)
 
 def parse_model(content):
 

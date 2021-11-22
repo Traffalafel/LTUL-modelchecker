@@ -1,7 +1,6 @@
 import re
-from parse_model import Model
 
-def get_sets(f_parsed, model:Model):
+def get_sets(f_parsed, model):
 
     n_args = len(f_parsed)
 
@@ -64,3 +63,48 @@ def get_sets(f_parsed, model:Model):
             if len(maxes) == len(satisfying):
                 states.add(w)
         return states
+
+    # Safe belief
+    if f_parsed[0] == "S":
+        agent = f_parsed[1]
+        subformula = f_parsed[2]
+        states = set()
+        satisfying = get_sets(subformula, model)
+        for w in model.W:
+            post = model.get_post(agent, w)
+            if len(satisfying.intersection(post)) == len(post):
+                states.add(w)
+        return states
+
+    # Weakly safe belief
+    if f_parsed[0] == "W":
+        agent = f_parsed[1]
+        subformula = f_parsed[2]
+        states = set()
+        satisfying = get_sets(subformula, model)
+        for w in model.W:
+            if w not in satisfying:
+                continue
+            post = model.get_strict_post(agent, w)
+            if len(satisfying.intersection(post)) == len(post):
+                states.add(w)
+        return states
+
+    # Strong belief
+    if f_parsed[0] == "T":
+        agent = f_parsed[1]
+        sub = f_parsed[2]
+        f_new = ["/\\", ["B", agent, sub], ["K", agent, ["=>", sub, ["S", agent, sub]]]]
+        return get_sets(f_new, model)
+
+    # Announcement
+    if f_parsed[0] == "!":
+        f_announcement = f_parsed[1]
+        f_consequence = f_parsed[2]
+
+        satisfying_before = get_sets(f_announcement, model)
+
+        model_new = model.announce(f_announcement)
+        satisfying_after = get_sets(f_consequence, model_new)
+
+        return model_new.W.difference(satisfying_before).union(satisfying_after)
