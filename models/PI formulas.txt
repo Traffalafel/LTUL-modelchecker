@@ -1,0 +1,11 @@
+(1): (~(B_a p)) /\ (B_a (B_b p)) /\ (B_a (B_c p)) /\ (~(B_b p)) /\ (B_b (B_a p)) /\ (B_b (B_c p)) /\ (~(B_c p)) /\ (B_c (B_b p)) /\ (B_c (B_a p))
+(2): (~(T_a p)) /\ (T_a (T_b p)) /\ (T_a (T_c p)) /\ (~(T_b p)) /\ (T_b (T_a p)) /\ (T_b (T_c p)) /\ (~(T_c p)) /\ (T_c (T_b p)) /\ (T_c (T_a p))
+(3): (I_a p) /\ (B_a (~(I_b p))) /\ (B_a (~(I_c p))) /\ (I_b p) /\ (B_b (~(I_a p))) /\ (B_b (~(I_c p))) /\ (I_c p) /\ (B_c (~(I_b p))) /\ (B_c (~(I_a p)))
+(4): (D_a p) /\ (B_a (~(D_b p))) /\ (B_a (~(D_c p))) /\ (D_b p) /\ (B_b (~(D_a p))) /\ (B_b (~(D_c p))) /\ (D_c p) /\ (B_c (~(D_b p))) /\ (B_c (~(D_a p)))
+(5): (I_a p) /\ (T_a (~(I_b p))) /\ (T_a (~(I_c p))) /\ (I_b p) /\ (T_b (~(I_a p))) /\ (T_b (~(I_c p))) /\ (I_c p) /\ (T_c (~(I_b p))) /\ (T_c (~(I_a p)))
+(6): (D_a p) /\ (T_a (~(D_b p))) /\ (T_a (~(D_c p))) /\ (D_b p) /\ (T_b (~(D_a p))) /\ (T_b (~(D_c p))) /\ (D_c p) /\ (T_c (~(D_b p))) /\ (T_c (~(D_a p)))
+
+(1 with 4 agents) (~(B_a p)) /\ (B_a (B_b p)) /\ (B_a (B_c p)) /\ (B_a (B_d p)) /\ (~(B_b p)) /\ (B_b (B_a p)) /\ (B_b (B_c p)) /\ (B_b (B_d p)) /\ (~(B_c p)) /\ (B_c (B_b p)) /\ (B_c (B_a p)) /\ (B_c (B_d p)) /\ (~(B_d p)) /\ (B_d (B_b p)) /\ (B_d (B_a p)) /\ (B_d (B_c p))
+
+(7 with only 1 agent announcing): ((~(B_b p)) ! ((B_a (B_c p)) /\ (B_a (B_d p))))
+(7 with only 1 agent announcing): (~(B_2 p)) ! (B_1 (B_3 p))

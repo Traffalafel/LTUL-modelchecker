@@ -97,6 +97,20 @@ def get_sets(f_parsed, model):
         f_new = ["/\\", ["B", agent, sub], ["K", agent, ["=>", sub, ["S", agent, sub]]]]
         return get_sets(f_new, model)
 
+    # Ignorance
+    if f_parsed[0] == "I":
+        agent = f_parsed[1]
+        sub = f_parsed[2]
+        f_new = ["/\\", ["~", ["K", agent, sub]], ["~", ["K", agent, ["~", sub]]]]
+        return get_sets(f_new, model)
+    
+    # Doubt
+    if f_parsed[0] == "D":
+        agent = f_parsed[1]
+        sub = f_parsed[2]
+        f_new = ["/\\", ["~", ["B", agent, sub]], ["~", ["B", agent, ["~", sub]]]]
+        return get_sets(f_new, model)
+
     # Announcement
     if f_parsed[0] == "!":
         f_announcement = f_parsed[1]
@@ -106,5 +120,4 @@ def get_sets(f_parsed, model):
 
         model_new = model.announce(f_announcement)
         satisfying_after = get_sets(f_consequence, model_new)
-
         return model_new.W.difference(satisfying_before).union(satisfying_after)

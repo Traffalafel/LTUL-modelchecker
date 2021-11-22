@@ -11,14 +11,13 @@ class Model():
         self.V = V
 
     def get_max(self, agent, S):
-        output = S
-        for (s,d) in self.R[agent]:
-            if s == d:
-                continue
-            if s in output:
-                output.remove(s)
+        output = set()
+        for s in S:
+            post = self.get_post(agent, s)
+            if all((p,s) in self.R[agent] for p in post):
+                output.add(s)
         return output
-    
+        
     def get_post(self, agent, state):
         return set(d for s,d in self.R[agent] if s == state)
 
@@ -35,7 +34,12 @@ class Model():
         return set.union(pre, post)
 
     def announce(self, formula):
+
         W_new = get_sets(formula, self)
+
+        # Keep global states
+        global_states = set(w for w in self.W if w[0] == "G")
+        W_new = W_new.union(global_states)
 
         # Get new transition relation
         R_new = dict()
@@ -50,7 +54,21 @@ class Model():
         for w in W_new:
             V_new[w] = self.V[w]
 
-        return Model(W_new, R_new, V_new)
+        model_new = Model(W_new, R_new, V_new)
+        return model_new
+
+    def print(self):
+        print(f"W: {self.W}")
+        print()
+        print("R:")
+        for agent in self.R:
+            R_print = [(s,d) for (s,d) in self.R[agent] if s != d]
+            print(f"{agent}: {R_print}")
+        print()
+        print("V:")
+        for state in self.W:
+            V_print = [s for s in self.V[state] if len(s) > 0]
+            print(f"{state}: {V_print}")
 
 def parse_model(content):
 
@@ -131,9 +149,7 @@ def main():
     with open(file_path, 'r') as fd:
         content = fd.read()
     model = parse_model(content)
-    print(model.W)
-    print(model.R)
-    print(model.V)
+    model.print()
 
     print(model.get_possible('s0', 'a'))
 

@@ -34,6 +34,10 @@ def main():
 
     # Check formula on model
     sat = get_sets(f_parsed, model)
+    if len(sat) == 0:
+        print("None")
+        return
+        
     print(f"Satisfying states: {sat}")
     print()
 

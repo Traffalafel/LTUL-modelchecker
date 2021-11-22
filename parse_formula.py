@@ -18,7 +18,7 @@ def parse_formula(formula):
         return ["~", parse_formula(sub)]
 
     # Knowledge operator
-    knowledge = r"^K_([a-z])\((.+)\)$|^K_([a-z])([a-z])$"
+    knowledge = r"^K_(\w+)\((.+)\)$|^K_(\w+)([a-z])$"
     match = re.match(knowledge, formula)
     if match is not None:
         agent = match.group(1) if match.group(1) is not None else match.group(3)
@@ -26,7 +26,7 @@ def parse_formula(formula):
         return ["K", agent, parse_formula(sub)]
 
     # Belief operator
-    belief = r"^B_([a-z])\((.+)\)$|^B_([a-z])([a-z])$"
+    belief = r"^B_(\w+)\((.+)\)$|^B_(\w+)([a-z])$"
     match = re.match(belief, formula)
     if match is not None:
         agent = match.group(1) if match.group(1) is not None else match.group(3)
@@ -34,7 +34,7 @@ def parse_formula(formula):
         return ["B", agent, parse_formula(sub)]
 
     # Safe belief operator
-    safebelief = r"^S_([a-z])\((.+)\)$|^S_([a-z])([a-z])$"
+    safebelief = r"^S_(\w+)\((.+)\)$|^S_(\w+)([a-z])$"
     match = re.match(safebelief, formula)
     if match is not None:
         agent = match.group(1) if match.group(1) is not None else match.group(3)
@@ -42,7 +42,7 @@ def parse_formula(formula):
         return ["S", agent, parse_formula(sub)]
 
     # Weakly safe belief operator
-    weaklysafebelief = r"^W_([a-z])\((.+)\)$|^W_([a-z])([a-z])$"
+    weaklysafebelief = r"^W_(\w+)\((.+)\)$|^W_(\w+)([a-z])$"
     match = re.match(weaklysafebelief, formula)
     if match is not None:
         agent = match.group(1) if match.group(1) is not None else match.group(3)
@@ -50,12 +50,28 @@ def parse_formula(formula):
         return ["T", agent, parse_formula(sub)]
 
     # Strong belief operator
-    strongbelief = r"^T_([a-z])\((.+)\)$|^T_([a-z])([a-z])$"
+    strongbelief = r"^T_(\w+)\((.+)\)$|^T_(\w+)([a-z])$"
     match = re.match(strongbelief, formula)
     if match is not None:
         agent = match.group(1) if match.group(1) is not None else match.group(3)
         sub = match.group(2) if match.group(2) is not None else match.group(4)
         return ["T", agent, parse_formula(sub)]
+
+    # Ignorance operator
+    ignorance = r"^I_(\w+)\((.+)\)$|^I_(\w+)([a-z])$"
+    match = re.match(ignorance, formula)
+    if match is not None:
+        agent = match.group(1) if match.group(1) is not None else match.group(3)
+        sub = match.group(2) if match.group(2) is not None else match.group(4)
+        return ["I", agent, parse_formula(sub)]
+    
+    # Doubt operator
+    doubt = r"^D_(\w+)\((.+)\)$|^D_(\w+)([a-z])$"
+    match = re.match(doubt, formula)
+    if match is not None:
+        agent = match.group(1) if match.group(1) is not None else match.group(3)
+        sub = match.group(2) if match.group(2) is not None else match.group(4)
+        return ["D", agent, parse_formula(sub)]
 
     # Binary operators
     subs, op = get_multi_subformulas(formula)

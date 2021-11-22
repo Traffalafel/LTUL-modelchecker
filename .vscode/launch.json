@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "./run.py",
             "console": "integratedTerminal",
-            "args": [".\\models\\model1.em", "K_a (T_a p)"]
+            "args": [".\\models\\test.em", "B_a (p)"]
         }
     ]
 }
