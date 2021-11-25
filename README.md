@@ -57,6 +57,12 @@ K_a ((B_b (~p)) ! (~(B_c (B_b (~p)))))
 Please note that the parsing of parentheses can be tricky.
 If you encounter an error in the parse function, please try to add or remove some parentheses in the formula.
 
+## Future work
+The following features would be nice to have:
+- Better parsing of logic formulas
+- Caching of results from intermediate steps
+- Define formulas in files instead of in the command line 
+
 ## Bibliography
 
 [1] Hansen, Jens Ulrik. "A logic-based approach to pluralistic ignorance." Proceedings of PhDs in Logic III. to appear (2012).
